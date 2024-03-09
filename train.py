@@ -48,23 +48,22 @@ def init_distributed(hparams, n_gpus, rank, group_name):
 def prepare_dataloaders(hparams):
     # Get data, data loaders and collate function ready
     input_files,output_files = [],[]
+    temp_outputfiles_lists = os.listdir(hparams.output_data_root)
     for f in os.listdir(hparams.input_data_root):
-        input_files.append(f)
+        if f in temp_outputfiles_lists:
+            input_files.append(os.path.join(hparams.input_data_root, f))
+            output_files.append(os.path.join(hparams.output_data_root,f))
 
     input_files.sort()
-    for f in os.listdir(hparams.output_data_root):
-       if f in input_files:
-         output_files.append(f)
-    
     output_files.sort()
     # print(len(input_files),len(output_files))
-    for i,f in enumerate(input_files):
-      if not f in output_files:
-        input_files.pop(i)
-        # print(f)
-      else:
-        output_files[i] = os.path.join(hparams.output_data_root,f)
-        input_files[i] = os.path.join(hparams.input_data_root,f)
+    # for i,f in enumerate(input_files):
+    #   if not f in output_files:
+    #     input_files.pop(i)
+    #     # print(f)
+    #   else:
+    #     output_files[i] = os.path.join(hparams.output_data_root,f)
+    #     input_files[i] = os.path.join(hparams.input_data_root,f)
 
     # print("input")
     # print(len(input_files),len(output_files))
@@ -265,9 +264,9 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
     for epoch in range(epoch_offset, hparams.epochs):
         print("Epoch: {}".format(epoch))
         for i, batch in enumerate(train_loader):
-            if iteration%20 == 0:
-              iteration += 1
-              break
+            # if iteration%20 == 0:
+            #   iteration += 1
+            #   break
             start = time.perf_counter()
             for param_group in optimizer.param_groups:
                 param_group['lr'] = learning_rate
@@ -316,11 +315,9 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
                 validate(output_directory,model, criterion, valset, iteration,
                          hparams.batch_size, n_gpus, collate_fn, logger,
                          hparams.distributed_run, rank)
-                # if rank == 0:
-                #     checkpoint_path = os.path.join(
-                #         output_directory, "checkpoint_{}".format(iteration))
-                #     save_checkpoint(model, optimizer, learning_rate, iteration,
-                #                     checkpoint_path)
+                if rank == 0:
+                    checkpoint_path = os.path.join(output_directory, "checkpoint_{}".format(iteration))
+                    save_checkpoint(model, optimizer, learning_rate, iteration,checkpoint_path)
 
             iteration += 1
 

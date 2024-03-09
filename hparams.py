@@ -14,7 +14,7 @@ def create_hparams(hparams_string=None,verbose=False):
     # Experiment Parameters        #
     ################################
     "epochs":500,
-    "iters_per_checkpoint":10,
+    "iters_per_checkpoint":1000,
     "seed":1234,
     "dynamic_loss_scaling":True,
     "fp16_run":False,
@@ -46,9 +46,9 @@ def create_hparams(hparams_string=None,verbose=False):
     "mel_fmax":8000.0,
 
     #Data parameters
-    "input_data_root": '/content/drive/MyDrive/NLP_Project/S2S Parallel data/Hindi_wav',
-    "output_data_root": '/content/drive/MyDrive/NLP_Project/S2S Parallel data/Telugu_wav',
-    "train_size": 0.99,
+    "input_data_root": '/home/wangkengxue/code2/cvssdata/wavs',
+    "output_data_root": '/home/wangkengxue/code2/cvssdata_en/train',
+    "train_size": 0.95,
     #Output Audio Parameters
     "out_channels":1025,
     ################################
@@ -92,7 +92,7 @@ def create_hparams(hparams_string=None,verbose=False):
     "learning_rate":1e-3,
     "weight_decay":1e-6,
     "grad_clip_thresh":1.0,
-    "batch_size":4,
+    "batch_size":2,
     "mask_padding":True  
     # set model's padded outputs to padded values
   }
