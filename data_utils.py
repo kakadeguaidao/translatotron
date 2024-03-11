@@ -178,3 +178,4 @@ class TextMelCollate():
 
         return input_padded, input_lengths, mel_padded, gate_padded, \
             output_lengths
+        # 输入，输入的长度，输出，输出的mask,输出的长度
